@@ -1,6 +1,14 @@
 # Install with: pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 langchain
-langchain-deepseek
+# langchain-deepseek
 python-dotenv
 langgraph
 IPython
+jupyter
+
+langchain-community 
+pypdf 
+langchain-text-splitters
+angchain-chroma 
+angchain-huggingface 
+sentence-transformers

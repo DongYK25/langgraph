@@ -7,22 +7,34 @@ from operator import add as add_messages
 from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_core.tools import tool
 
 load_dotenv()
+# I want to minimize hallucination - temperature = 0 makes the model output more deterministic 
+# llm = ChatOpenAI(
+#     model="gpt-4o", temperature = 0) 
 
 llm = ChatOpenAI(
-    model="gpt-4o", temperature = 0) # I want to minimize hallucination - temperature = 0 makes the model output more deterministic 
-
+    model=os.getenv("DEEPSEEK_MODEL"),
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
+    temperature = 0,
+    )
+    
+    
+################################################################################################↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
 # Our Embedding Model - has to also be compatible with the LLM
-embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-small",
+# embeddings = OpenAIEmbeddings(
+#     model="text-embedding-3-small",
+# )
+from langchain_huggingface import HuggingFaceEmbeddings
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
 
-
-pdf_path = "Stock_Market_Performance_2024.pdf"
+pdf_path = os.path.join(os.path.dirname(__file__), "Stock_Market_Performance_2024.pdf")
 
 
 # Safety measure I have put for debugging purposes :)
@@ -48,7 +60,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 
 pages_split = text_splitter.split_documents(pages) # We now apply this to our pages
 
-persist_directory = r"C:\Vaibhav\LangGraph_Book\LangGraphCourse\Agents"
+persist_directory = r"C:\Users\dong\Desktop\langgraph\agent"
 collection_name = "stock_market"
 
 # If our collection does not exist in the directory, we create using the os command
@@ -70,6 +82,7 @@ except Exception as e:
     print(f"Error setting up ChromaDB: {str(e)}")
     raise
 
+################################################################################↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
 # Now we create our retriever 
 retriever = vectorstore.as_retriever(

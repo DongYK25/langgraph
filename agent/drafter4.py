@@ -76,7 +76,7 @@ def our_agent(state: AgentState) -> AgentState:
         user_input = input("\nWhat would you like to do with the document? ")
         print(f"\n👤 USER: {user_input}")
         user_message = HumanMessage(content=user_input)
-
+    print(111111111,user_message)
     all_messages = [system_prompt] + list(state["messages"]) + [user_message]
 
     response = model.invoke(all_messages)
@@ -84,8 +84,9 @@ def our_agent(state: AgentState) -> AgentState:
     print(f"\n🤖 AI: {response.content}")
     if hasattr(response, "tool_calls") and response.tool_calls:
         print(f"🔧 USING TOOLS: {[tc['name'] for tc in response.tool_calls]}")
-
-    return {"messages": list(state["messages"]) + [user_message, response]}
+    aa = {"messages": list(state["messages"]) + [user_message, response]}
+    print(2222222,aa)
+    return aa
 
 
 def should_continue(state: AgentState) -> str:
